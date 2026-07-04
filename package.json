@@ -1,0 +1,21 @@
+{
+  "name": "133-1-finalproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seedn3ey/133-1-FinalProject.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/seedn3ey/133-1-FinalProject/issues"
+  },
+  "homepage": "https://github.com/seedn3ey/133-1-FinalProject#readme"
+}

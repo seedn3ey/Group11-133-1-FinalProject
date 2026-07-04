@@ -1,89 +1,61 @@
-function buildDpTable(items, maxCapacity) {
-  const itemCount = items.length;
+function solveKnapsack(items, maxCapacity) {
+  const n = items.length;
+  
+  // 1. Initialize the 2D DP table with zeros
+  // Size: (n + 1) rows by (maxCapacity + 1) columns
+  const K = Array(n + 1).fill(0).map(() => Array(maxCapacity + 1).fill(0));
 
-  // (itemCount + 1) rows x (maxCapacity + 1) columns, initialized to 0
-  const dpTable = Array.from({ length: itemCount + 1 }, () =>
-    new Array(maxCapacity + 1).fill(0)
-  );
-
-  for (let i = 1; i <= itemCount; i++) {
+  // 2. Build the table using the bottom-up approach
+  for (let i = 1; i <= n; i++) {
     const currentItem = items[i - 1];
-    const itemWeight = currentItem.weight;
-    const itemPriority = currentItem.priority;
+    const w = currentItem.weight;
+    const v = currentItem.priority;
 
-    for (let capacity = 0; capacity <= maxCapacity; capacity++) {
-      const excludeValue = dpTable[i - 1][capacity];
-
-      if (itemWeight <= capacity) {
-        const includeValue = dpTable[i - 1][capacity - itemWeight] + itemPriority;
-        dpTable[i][capacity] = Math.max(excludeValue, includeValue);
+    for (let j = 0; j <= maxCapacity; j++) {
+      if (w <= j) {
+        // Item fits: take the max of excluding it or including it
+        K[i][j] = Math.max(K[i - 1][j], K[i - 1][j - w] + v);
       } else {
-        // Item does not fit at this capacity; carry the previous row forward
-        dpTable[i][capacity] = excludeValue;
+        // Item is too heavy: carry over the previous value
+        K[i][j] = K[i - 1][j];
       }
     }
   }
 
-  return dpTable;
-}
+  // 3. Backtrack to find which items were selected
+  let res = K[n][maxCapacity];
+  const maximumAchievedPriority = res;
+  let wRemaining = maxCapacity;
+  
+  const itemsSelectedForLoading = [];
+  let totalPayloadWeightKg = 0;
 
-/**
- * Backtracks through a completed DP table to recover which items were
- * actually selected in the optimal solution.
- *
- * @param {number[][]} dpTable
- * @param {Array<{weight:number, priority:number}>} items
- * @param {number} maxCapacity
- * @returns {{selectedItems: object[], totalWeight: number}}
- */
-function backtrackSelectedItems(dpTable, items, maxCapacity) {
-  const selectedItems = [];
-  let remainingCapacity = maxCapacity;
-  let totalWeight = 0;
-
-  for (let i = items.length; i > 0; i--) {
-    const includedThisItem = dpTable[i][remainingCapacity] !== dpTable[i - 1][remainingCapacity];
-
-    if (includedThisItem) {
-      const chosenItem = items[i - 1];
-      selectedItems.unshift(chosenItem);
-      totalWeight += chosenItem.weight;
-      remainingCapacity -= chosenItem.weight;
+  // Start from the bottom right of the table and work backward
+  for (let i = n; i > 0 && res > 0; i--) {
+    // If the value came from the row above, the item was NOT included
+    if (res === K[i - 1][wRemaining]) {
+      continue;
+    } else {
+      // The item WAS included
+      const selectedItem = items[i - 1];
+      
+      // Add it to the front of our results array
+      itemsSelectedForLoading.unshift(selectedItem);
+      
+      // Deduct its priority and weight to find the next cell to check
+      res -= selectedItem.priority;
+      wRemaining -= selectedItem.weight;
+      totalPayloadWeightKg += selectedItem.weight;
     }
   }
 
-  return { selectedItems, totalWeight };
-}
-
-/**
- * Public entry point of the solver module.
- * Given a list of relief items and a vehicle's maximum capacity, returns
- * the optimal (maximum-priority) combination of items to load.
- *
- * @param {Array<{id:number,name:string,weight:number,priority:number}>} items
- * @param {number} maxCapacity  maximum weight the vehicle can carry (kg)
- * @returns {{
- *   maximumAchievedPriority: number,
- *   totalPayloadWeightKg: number,
- *   remainingVehicleCapacityKg: number,
- *   itemsSelectedForLoading: object[]
- * }}
- */
-
-function solveKnapsack(items, maxCapacity) {
-  if (!Number.isInteger(maxCapacity) || maxCapacity < 0) {
-    throw new Error("maxCapacity must be a non-negative integer.");
-  }
-
-  const dpTable = buildDpTable(items, maxCapacity);
-  const { selectedItems, totalWeight } = backtrackSelectedItems(dpTable, items, maxCapacity);
-
+  // 4. Return the unified optimization metrics formatted for main.js
   return {
-    maximumAchievedPriority: dpTable[items.length][maxCapacity],
-    totalPayloadWeightKg: totalWeight,
-    remainingVehicleCapacityKg: maxCapacity - totalWeight,
-    itemsSelectedForLoading: selectedItems,
+    maximumAchievedPriority,
+    totalPayloadWeightKg,
+    remainingVehicleCapacityKg: maxCapacity - totalPayloadWeightKg,
+    itemsSelectedForLoading
   };
 }
 
-module.exports = { solveKnapsack, buildDpTable, backtrackSelectedItems };
+module.exports = { solveKnapsack };
