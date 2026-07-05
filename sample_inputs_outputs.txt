@@ -1,0 +1,65 @@
+================================================================================
+PROJECT: DISASTER RELIEF SUPPLY ALLOCATION & DISTRIBUTION
+MODULE: KNAPSACK SOLVER (DYNAMIC PROGRAMMING)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. INPUT DATASET: RELIEF INVENTORY MANIFEST
+--------------------------------------------------------------------------------
+The following inventory was utilized for all simulation runs:
+
+| Item Name            | Weight (kg) | Priority Score |
+|----------------------|-------------|----------------|
+| Medical Kit          | 5           | 20             |
+| Bottled Water        | 10          | 10             |
+| Rice Pack            | 20          | 35             |
+| Family Tent          | 40          | 25             |
+| Hygiene Pack         | 5           | 15             |
+| Canned Goods         | 15          | 25             |
+| Blanket Bundle       | 10          | 5              |
+| First Aid Supplies   | 8           | 15             |
+| Flashlight & Batt.   | 3           | 5              |
+| Water Purif. Kit     | 13          | 20             |
+
+--------------------------------------------------------------------------------
+2. SIMULATED RUN OUTPUT (Standard Deployment: W=60kg)
+--------------------------------------------------------------------------------
+[SYSTEM EXECUTION...]
+
+DISASTER RELIEF LOADING PLAN
+----------------------------
+Vehicle Capacity: 60 kg
+
+Optimal Selection:
+- Rice Pack            (20 kg, 35)
+- Canned Goods         (15 kg, 25)
+- Medical Kit          (5 kg, 20)
+- Water Purif. Kit     (13 kg, 20)
+- Hygiene Pack         (5 kg, 15)
+
+SUMMARY:
+- Maximum Priority Score    : 115
+- Total Payload Weight      : 58 kg
+- Remaining Capacity        : 2 kg
+
+[Execution Time: 0.0421 ms]
+
+--------------------------------------------------------------------------------
+3. EDGE CASE VERIFICATION SUMMARY
+--------------------------------------------------------------------------------
+
+TC2: Oversized Bounds (W=15kg)
+  -> STATUS: PASS (Payload: 0kg | Score: 0)
+
+TC3: Zero Capacity (W=0kg)
+  -> STATUS: PASS (Payload: 0kg | Score: 0)
+
+TC5: Abundant Capacity (W=100kg)
+  -> STATUS: PASS (All items selected | Score: 175)
+
+TC6: Empty Inventory (n=0)
+  -> STATUS: PASS (Payload: 0kg | Score: 0)
+
+================================================================================
+LOGISTICS MODULE: COMPUTATION COMPLETE.
+================================================================================
