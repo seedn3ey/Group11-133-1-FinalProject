@@ -27,15 +27,6 @@ function buildDpTable(items, maxCapacity) {
   return dpTable;
 }
 
-/**
- * Backtracks through a completed DP table to recover which items were
- * actually selected in the optimal solution.
- *
- * @param {number[][]} dpTable
- * @param {Array<{weight:number, priority:number}>} items
- * @param {number} maxCapacity
- * @returns {{selectedItems: object[], totalWeight: number}}
- */
 function backtrackSelectedItems(dpTable, items, maxCapacity) {
   const selectedItems = [];
   let remainingCapacity = maxCapacity;
@@ -54,21 +45,6 @@ function backtrackSelectedItems(dpTable, items, maxCapacity) {
 
   return { selectedItems, totalWeight };
 }
-
-/**
- * Public entry point of the solver module.
- * Given a list of relief items and a vehicle's maximum capacity, returns
- * the optimal (maximum-priority) combination of items to load.
- *
- * @param {Array<{id:number,name:string,weight:number,priority:number}>} items
- * @param {number} maxCapacity  maximum weight the vehicle can carry (kg)
- * @returns {{
- *   maximumAchievedPriority: number,
- *   totalPayloadWeightKg: number,
- *   remainingVehicleCapacityKg: number,
- *   itemsSelectedForLoading: object[]
- * }}
- */
 
 function solveKnapsack(items, maxCapacity) {
   if (!Number.isInteger(maxCapacity) || maxCapacity < 0) {
